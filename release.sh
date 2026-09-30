@@ -15,4 +15,8 @@ fi
 
 repo=$(git remote get-url origin | sed -E 's#^(git@github\.com:|https://github\.com/)##; s#\.git$##')
 
-gh release create "$task" --repo "$repo" --target main --title "$task" --notes ""
+gh release create "$task" --repo "$repo" --target main --title "$task" --notes "" >/dev/null
+
+url="https://github.com/$repo/tree/$task"
+printf '%s' "$url" | pbcopy
+echo "$url (copied to clipboard)"
