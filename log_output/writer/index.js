@@ -6,8 +6,11 @@ const fs = require('fs');
 const path = require('path');
 const filePath = path.join(process.env.LOG_DIR, 'log.txt');
 
-setInterval(() => {
+const step = () => {
   latest = `${new Date().toISOString()}: ${random_string}`;
   console.log(latest);
   fs.writeFileSync(filePath, latest);
-}, 5000)
+}
+
+step();
+setInterval(step, 5000);
