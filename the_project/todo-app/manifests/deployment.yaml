@@ -12,6 +12,16 @@ spec:
       labels:
         app: todo-app
     spec:
+      volumes:
+        - name: image-volume
+          persistentVolumeClaim:
+            claimName: todo-app-claim
       containers:
         - name: todo-app
-          image: todo-app:1.4
+          image: todo-app:1.5
+          env:
+          - name: IMAGE_DIR
+            value: /app/images
+          volumeMounts:
+          - name: image-volume
+            mountPath: /app/images
