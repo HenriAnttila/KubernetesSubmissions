@@ -7,6 +7,12 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const todos = [
+  'Learn Kubernetes basics',
+  'Deploy application to cluster',
+  'Configure persistent volumes',
+];
+
 let fetching = null;
 
 const fetchImage = async () => {
@@ -26,7 +32,17 @@ app.listen(PORT, () => {
 })
 
 app.get('/', (req, res) => {
-  res.send('<h1>Todo App</h1><img src="/image" width="600">');
+  res.send(`
+    <h1>Todo App</h1>
+    <img src="/image" width="600">
+    <form>
+      <input name="todo" maxlength="140">
+      <button>Send</button>
+    </form>
+    <ul>
+      ${todos.map(todo => `<li>${todo}</li>`).join('')}
+    </ul>
+  `);
 });
 
 app.get('/image', async (req, res) => {
