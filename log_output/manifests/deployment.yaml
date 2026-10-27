@@ -15,15 +15,22 @@ spec:
       volumes:
         - name: log-output-volume
           emptyDir: {}
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: shared-claim
       containers:
         - name: log-output-reader
-          image: log-output-reader:1.0
+          image: log-output-reader:1.1
           env:
           - name: LOG_DIR
             value: /app/files
+          - name: SHARED_DIR
+            value: /app/shared
           volumeMounts:
           - name: log-output-volume
             mountPath: /app/files
+          - name: shared-volume
+            mountPath: /app/shared
         - name: log-output-writer
           image: log-output-writer:1.0
           env:
