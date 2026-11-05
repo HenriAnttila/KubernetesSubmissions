@@ -7,11 +7,9 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const todos = [
-  'Learn Kubernetes basics',
-  'Deploy application to cluster',
-  'Configure persistent volumes',
-];
+const TODO_BACKEND_URL = process.env.TODO_BACKEND_URL;
+
+app.use(express.urlencoded());
 
 let fetching = null;
 
@@ -31,11 +29,13 @@ app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`);
 })
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+  const todos = await (await fetch(`${TODO_BACKEND_URL}/todos`)).json();
+  // i know this isn't safe :D
   res.send(`
     <h1>Todo App</h1>
     <img src="/image" width="600">
-    <form>
+    <form method="POST" action="/todos">
       <input name="todo" maxlength="140">
       <button>Send</button>
     </form>
@@ -43,6 +43,15 @@ app.get('/', (req, res) => {
       ${todos.map(todo => `<li>${todo}</li>`).join('')}
     </ul>
   `);
+});
+
+app.post('/todos', async (req, res) => {
+  await fetch(`${TODO_BACKEND_URL}/todos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ todo: req.body.todo }),
+  });
+  res.redirect('/');
 });
 
 app.get('/image', async (req, res) => {

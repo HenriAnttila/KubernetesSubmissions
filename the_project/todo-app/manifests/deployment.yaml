@@ -18,10 +18,12 @@ spec:
             claimName: todo-app-claim
       containers:
         - name: todo-app
-          image: todo-app:1.6
+          image: todo-app:1.7
           env:
           - name: IMAGE_DIR
             value: /app/images
+          - name: TODO_BACKEND_URL
+            value: http://todo-backend-svc:2345
           volumeMounts:
           - name: image-volume
             mountPath: /app/images
