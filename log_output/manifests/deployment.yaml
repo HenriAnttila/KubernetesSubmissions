@@ -16,17 +16,33 @@ spec:
       volumes:
         - name: log-output-volume
           emptyDir: {}
+        - name: log-output-config
+          configMap:
+            name: log-output-config
+            items:
+              - key: information.txt
+                path: information.txt
       containers:
         - name: log-output-reader
-          image: log-output-reader:1.2
+          image: log-output-reader:1.3
           env:
           - name: LOG_DIR
             value: /app/files
           - name: PING_PONG_URL
             value: http://ping-pong-svc:1345
+          - name: CONFIG_DIR
+            value: /app/config
+          - name: MESSAGE
+            valueFrom:
+              configMapKeyRef:
+                name: log-output-config
+                key: MESSAGE
           volumeMounts:
           - name: log-output-volume
             mountPath: /app/files
+          - name: log-output-config
+            mountPath: /app/config
+            readOnly: true
         - name: log-output-writer
           image: log-output-writer:1.0
           env:
