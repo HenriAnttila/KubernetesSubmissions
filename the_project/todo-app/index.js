@@ -1,11 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const imagePath = path.join(process.env.IMAGE_DIR, 'image.jpg');
-const MAX_AGE = 10 * 60 * 1000;
+const IMAGE_URL = process.env.IMAGE_URL;
+const IMAGE_MAX_AGE_MS = Number(process.env.IMAGE_MAX_AGE_MS);
+const TODO_MAX_LENGTH = process.env.TODO_MAX_LENGTH;
 
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 const TODO_BACKEND_URL = process.env.TODO_BACKEND_URL;
 
@@ -14,7 +16,7 @@ app.use(express.urlencoded());
 let fetching = null;
 
 const fetchImage = async () => {
-  const res = await fetch('https://picsum.photos/1200');
+  const res = await fetch(IMAGE_URL);
   if (!res.ok) throw new Error(`picsum responded ${res.status}`);
   fs.writeFileSync(`${imagePath}.tmp`, Buffer.from(await res.arrayBuffer()));
   fs.renameSync(`${imagePath}.tmp`, imagePath);
@@ -36,7 +38,7 @@ app.get('/', async (req, res) => {
     <h1>Todo App</h1>
     <img src="/image" width="600">
     <form method="POST" action="/todos">
-      <input name="todo" maxlength="140">
+      <input name="todo" maxlength="${TODO_MAX_LENGTH}">
       <button>Send</button>
     </form>
     <ul>
@@ -57,7 +59,7 @@ app.post('/todos', async (req, res) => {
 app.get('/image', async (req, res) => {
   if (!fs.existsSync(imagePath)) {
     await refresh();
-  } else if (Date.now() - fs.statSync(imagePath).mtimeMs > MAX_AGE) {
+  } else if (Date.now() - fs.statSync(imagePath).mtimeMs > IMAGE_MAX_AGE_MS) {
     refresh().catch(console.error);
   }
   res.sendFile(imagePath);

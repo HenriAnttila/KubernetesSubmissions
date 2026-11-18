@@ -19,12 +19,20 @@ spec:
             claimName: todo-app-claim
       containers:
         - name: todo-app
-          image: todo-app:1.7
+          image: todo-app:1.8
           env:
           - name: IMAGE_DIR
             value: /app/images
+          - name: PORT
+            value: "3000"
           - name: TODO_BACKEND_URL
             value: http://todo-backend-svc:2345
+          - name: IMAGE_URL
+            value: https://picsum.photos/1200
+          - name: IMAGE_MAX_AGE_MS
+            value: "600000"
+          - name: TODO_MAX_LENGTH
+            value: "140"
           volumeMounts:
           - name: image-volume
             mountPath: /app/images
